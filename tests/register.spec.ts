@@ -1,64 +1,63 @@
 import { test, expect } from '@playwright/test';
+import { RegisterPage } from '../pages/registerPage';
+import datosRegister from '../data/datosRegister.json';
+
+let registerPage:  RegisterPage;
+let emailDinamico: string;
+
+test.beforeAll(() => {
+  const timestamp = Date.now();
+  emailDinamico = `user${timestamp}@mail.com`;
+});
+
+test.beforeEach(async ({ page })=>{
+  registerPage = new RegisterPage (page);
+  await registerPage.visitarPaginaRegistro();
+});
 
 test('TC-1 Verificación de elementos visuales en la pagina de registro', async ({ page }) => {
-  await page.goto('http://localhost:3000/');
-  await expect(page.locator('input[name="firstName"]')).toBeVisible();
-  await expect(page.locator('input[name="lastName"]')).toBeVisible();
-  await expect(page.locator('input[name="email"]')).toBeVisible();
-  await expect(page.locator('input[name="password"]')).toBeVisible();
-  await expect(page.getByTestId('boton-registrarse')).toBeVisible();
- 
+  await expect(registerPage.firstNameInput).toBeVisible();
+  await expect(registerPage.lastNameInput).toBeVisible();
+  await expect(registerPage.emailInput).toBeVisible();
+  await expect(registerPage.passwordInput).toBeVisible();
+  await expect(registerPage.registerButton).toBeVisible();
+
 });
 
 test('TC-2 Verificar Botón de registro esta inhabilitado por defecto', async ({page}) =>{
-  await page.goto('http://localhost:3000/');
-  await expect(page.getByTestId('boton-registrarse')).toBeDisabled();
+  await expect(registerPage.registerButton).toBeDisabled();
+
 });
 
 test('TC-3 Verificar Botón de registro este habilitado al completar los campos obligatorios', async ({page}) =>{
- await page.goto('http://localhost:3000/');
- await page.locator('input[name=firstName]').fill('John');
- await page.locator('input[name=lastName]').fill('Doe');
- await page.locator('input[name=email]').fill('doe@gmail.com');
- await page.locator('input[name=password]').fill('123456');
- await expect(page.getByTestId('boton-registrarse')).toBeEnabled();
+ const usuario = datosRegister.usuarioValido;
+ await registerPage.completarFormularioRegistro (usuario.nombre, usuario.apellido, emailDinamico, usuario.password);
+ await expect(registerPage.registerButton).toBeEnabled();
 
 });
 
 test('TC-4 Verificar redirección a la página de inicio al hacer click en el botón de "inicio de sesión"', async ({page})=>{
-  await page.goto('http://localhost:3000/');
-  await page.getByTestId('boton-login-header-signup').click();
+  await registerPage.loginButton.click();
   await expect(page).toHaveURL('http://localhost:3000/login');
  
   });
    
 test('TC-5 Verificar registro exitoso con datos válidos', async ({page})=>{
-  await page.goto('http://localhost:3000/');
-  await page.locator('input[name=firstName]').fill('Juan');
-  await page.locator('input[name=lastName]').fill('Martinez');
-  await page.locator('input[name=email]').fill('juan'+Date.now()+toString()+'martinez@gmail.com');     
-  await page.locator('input[name=password]').fill('123456');
-  await page.getByTestId('boton-registrarse').click();
+  const usuario = datosRegister.usuarioValido;
+  await registerPage.completarHacerClickBotonRegistro(usuario.nombre, usuario.apellido, emailDinamico, usuario.password);
   await expect(page.getByText('Registro exitoso')).toBeVisible();
 
 
- })
+ });
+
  test('TC-6 Verificar que un usuario no pueda registrarse con un email ya registrado', async ({page})=>{
-   const email = 'juan'+ Date.now().toString() + '@gmail.com';
-   await page.goto('http://localhost:3000/');
-   await page.locator('input[name=firstName]').fill('Juan');
-   await page.locator('input[name=lastName]').fill('Martinez');
-   await page.locator('input[name=email]').fill(email);
-   await page.locator('input[name=password]').fill('123456');
-   await page.getByTestId('boton-registrarse').click();
+   const usuario = datosRegister.usuarioValido;
+   await registerPage.completarHacerClickBotonRegistro(usuario.nombre, usuario.apellido, emailDinamico, usuario.password);
    await expect(page.getByText('Registro exitoso')).toBeVisible();
-   await page.goto('http://localhost:3000/');
-   await page.locator('input[name=firstName]').fill('Maria');
-   await page.locator('input[name=lastName]').fill('Gomez');
-   await page.locator('input[name=email]').fill(email);
-   await page.locator('input[name=password]').fill('123456');
-   await page.getByTestId('boton-registrarse').click();
+   await registerPage.visitarPaginaRegistro();
+   await registerPage.completarHacerClickBotonRegistro(usuario.nombre, usuario.apellido, emailDinamico, usuario.password);
    await expect(page.getByText('email already in use')).toBeVisible();
    await expect(page.getByText('Registro exitoso')).not.toBeVisible();
 
- })
+ });
+ 
