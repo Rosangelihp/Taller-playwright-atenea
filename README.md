@@ -1,3 +1,4 @@
+<img src="https://github.com/Rosangelihp/fintech-bank-Atenea-automation-playwright/blob/main/PlayGit.png?raw=true" width="100%" />
 ![Portada](https://github.com/Rosangelihp/fintech-bank-Atenea-automation-playwright/blob/main/PlayGit.png?raw=true)
 # Automatización de Pruebas E2E con Playwright | Atenea Bank App  
 # E2E Test Automation with Playwright | Atenea Bank App
