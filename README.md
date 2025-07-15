@@ -1,7 +1,6 @@
 # Automatización de Pruebas E2E con Playwright | Atenea Bank App  
 # E2E Test Automation with Playwright | Atenea Bank App
-
-![Portada](./imagen/portada.png)
+![Portada](./images/portada.png)
 
 ## ✨ Objetivo
 Este proyecto automatiza pruebas end-to-end para **Atenea**, una aplicación bancaria de prueba donde los usuarios pueden simular transacciones. Las pruebas están desarrolladas con **Playwright** y organizadas mediante el patrón de diseño **Page Object Model (POM)**, para garantizar modularidad y facilidad de mantenimiento.
